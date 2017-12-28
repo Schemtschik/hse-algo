@@ -1,22 +1,21 @@
 #include <algorithm>
 #include <iostream>
 
-struct Node;
-typedef Node* PNode;
-
+template <typename T>
 struct Node {
-    int value;
-    PNode next;
+    T value;
+    Node<T>* next;
 
-    Node(int value): value(value), next(nullptr) {}
+    Node(T value): value(value), next(nullptr) {}
 };
 
-PNode merge(PNode first, PNode second) {
+template <typename T>
+Node<T>* merge(Node<T>* first, Node<T>* second) {
     if (first->value > second->value)
         std::swap(first, second);
 
-    PNode prev = first;
-    PNode head = first;
+    Node<T>* prev = first;
+    Node<T>* head = first;
     first = first->next;
     while (first != nullptr) {
         while (second != nullptr && second->value < first->value) {
@@ -35,14 +34,15 @@ PNode merge(PNode first, PNode second) {
     return head;
 }
 
-PNode sort(PNode list, size_t count) { // Merge Sort
+template <typename T>
+Node<T>* sort(Node<T>* list, size_t count) { // Merge Sort
     if (count <= 1)
         return list;
 
-    PNode middle = list;
+    Node<T>* middle = list;
     for (size_t i = 0; i < count / 2 - 1; i++)
         middle = middle->next;
-    PNode preMiddle = middle;
+    Node<T>* preMiddle = middle;
     middle = middle->next;
     preMiddle->next = nullptr;
 
@@ -52,22 +52,22 @@ PNode sort(PNode list, size_t count) { // Merge Sort
     return merge(list, middle);
 }
 
-void clear(PNode list) {
+template <typename T>
+void clear(Node<T>* list) {
     if (list == nullptr)
         return;
 
-    PNode cur = list;
-    while (list->next != nullptr) {
-        PNode toDelete = cur;
-        cur = cur->next;
-        delete toDelete;
+    Node<T>* next = nullptr;
+    while (list != nullptr) {
+        next = list->next;
+        delete list;
+        list = next;
     }
-
-    delete cur;
 }
 
 int main() {
-    PNode head = nullptr, tail = nullptr;
+    Node<int>* head = nullptr;
+    Node<int>* tail = nullptr;
 
     size_t n = 0;
     std::cin >> n;
@@ -77,19 +77,21 @@ int main() {
         std::cin >> t;
 
         if (head == nullptr) {
-            head = new Node(t);
+            head = new Node<int>(t);
             tail = head;
         } else {
-            tail->next = new Node(t);
+            tail->next = new Node<int>(t);
             tail = tail->next;
         }
     }
 
     head = sort(head, n);
 
-    for (PNode cur = head; cur != nullptr; cur = cur->next)
+    for (Node<int>* cur = head; cur != nullptr; cur = cur->next)
         std::cout << cur->value << ' ';
     std::cout << std::endl;
+
+    clear(head);
 
     return 0;
 }
