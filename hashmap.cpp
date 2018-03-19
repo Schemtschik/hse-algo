@@ -72,7 +72,7 @@ public:
         return hash;
     }
     
-    void insert(PairType val) {
+    void insert(PairType const& val) {
         for (auto i : table[hash(val.first) % mod])
             if (i->first == val.first)
                 return;
@@ -83,7 +83,7 @@ public:
         checkForRehash();
     }
     
-    void erase(KeyType key) {
+    void erase(KeyType const& key) {
         for (auto it = table[hash(key) % mod].begin(); it != table[hash(key) % mod].end(); it++)
             if ((*it)->first == key) {
                 elementsList.erase(*it);
@@ -110,21 +110,21 @@ public:
         return elementsList.end();
     }
     
-    iterator find(KeyType key) {
+    iterator find(KeyType const& key) {
         for (auto i : table[hash(key) % mod])
             if (i->first == key)
                 return i;
         return end();
     }
     
-    const_iterator find(KeyType key) const {
+    const_iterator find(KeyType const& key) const {
         for (auto i : table[hash(key) % mod])
             if (i->first == key)
                 return i;
         return end();
     }
     
-    ValueType& operator[](KeyType key) {
+    ValueType& operator[](KeyType const& key) {
         insert(PairType(key, ValueType()));
         
         for (auto i : table[hash(key) % mod])
@@ -134,7 +134,7 @@ public:
         return elementsList.begin()->second;
     }
     
-    ValueType const& at(KeyType key) const {
+    ValueType const& at(KeyType const& key) const {
         for (auto i : table[hash(key) % mod])
             if (i->first == key)
                 return static_cast<ValueType const&>(i->second);
